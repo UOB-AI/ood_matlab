@@ -1,10 +1,4 @@
-#!/usr/bin/env bash
-
-<%- gpu = context.node_type.include?("vis") -%>
-
-# Clean the environment
-module purge
-
+#!/bin/bash
 # Set working directory to home directory
 cd "${HOME}"
 
@@ -13,35 +7,21 @@ cd "${HOME}"
 #
 
 (
-  export SEND_256_COLORS_TO_REMOTE=1
   export XDG_CONFIG_HOME="<%= session.staged_root.join("config") %>"
   export XDG_DATA_HOME="<%= session.staged_root.join("share") %>"
   export XDG_CACHE_HOME="$(mktemp -d)"
-  export $(dbus-launch)
-
-  module restore
-  set -x
-  xfwm4 --compositor=off --daemon --sm-client-disable
+  xfwm4 --compositor=off --sm-client-disable
   xsetroot -solid "#D3D3D3"
   xfsettingsd --sm-client-disable
   xfce4-panel --sm-client-disable
 ) &
 
-#
-# Start MATLAB
-#
-
-# Load the required environment
-module load xalt/latest <%= context.version %>
-
-# Launch MATLAB
-<%- if gpu -%>
-module load intel/16.0.3 virtualgl
+module purge
+module use /data/software/packages/modulefiles
+module load Matlab
 module list
+
+# Launch Matlab
 set -x
-vglrun matlab -desktop -nosoftwareopengl
-<%- else -%>
-module list
-set -x
+which matlab
 matlab -desktop
-<%- end -%>
