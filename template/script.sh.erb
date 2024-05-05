@@ -18,7 +18,7 @@ cd "${HOME}"
 
 module purge
 module use /data/software/packages/modulefiles
-module load Matlab
+module load Matlab/<%= context.version %>
 module list
 
 # Launch Matlab
